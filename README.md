@@ -33,6 +33,7 @@ HerokuPgBackupsArchive.configure do |config|
   config.heroku_toolbelt_path = "path/to/heroku/executable" # defaults to `vendor/heroku-toolbelt/bin/heroku` when not explicitly set
   config.aws_access_key_id = "aws-secret-key-id" # defaults to `ENV["AWS_ACCESS_KEY_ID"]` when not explicitly set
   config.aws_secret_access_key = "aws-secret-access-key" # defaults to `ENV["AWS_SECRET_ACCESS_KEY"]` when not explicitly set
+  config.after_complete = lambda { puts "I'm all done!" } # defaults to no action
 end
 ```
 

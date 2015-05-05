@@ -19,6 +19,7 @@ module HerokuPgBackupsArchive
     def backup_and_archive
       backup = Backup.create
       BackupArchive.perform(backup)
+      config.after_complete.call unless config.after_complete.nil?
     end
   end
 end
