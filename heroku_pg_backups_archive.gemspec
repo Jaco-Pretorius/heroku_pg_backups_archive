@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["engineering@gethightower.com"]
 
   spec.summary       = %q{Backup your heroku PG database, and archive it to S3.}
-  spec.description   = %q{Backup your heroku PG database, and archive it to S3 optionally with SSE-CA.}
+  spec.description   = %q{Backup your heroku PG database, and archive it to S3 optionally with SSE-C.}
   spec.homepage      = "https://www.github.com/hightower/heroku_pg_backups_archive"
   spec.license       = "MIT"
 
