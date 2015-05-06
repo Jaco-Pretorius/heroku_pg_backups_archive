@@ -17,7 +17,7 @@ describe HerokuPgBackupsArchive::ToolbeltHelper do
 
     before do
       allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:`).with(
-        "/path/to/heroku pg:backups capture -a my-heroku-app"
+        "/path/to/heroku pg:backups capture -a my-heroku-app 2>&1"
       ).and_return(output)
     end
 
@@ -32,7 +32,7 @@ describe HerokuPgBackupsArchive::ToolbeltHelper do
 
     before do
       allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:`).with(
-        "/path/to/heroku pg:backups public-url b022 -q -a my-heroku-app"
+        "/path/to/heroku pg:backups public-url b022 -q -a my-heroku-app 2>&1"
       ).and_return(output)
     end
 
@@ -47,7 +47,7 @@ describe HerokuPgBackupsArchive::ToolbeltHelper do
 
     before do
       allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:`).with(
-        "/path/to/heroku pg:backups info b022 -a my-heroku-app"
+        "/path/to/heroku pg:backups info b022 -a my-heroku-app 2>&1"
       ).and_return(output)
     end
 

@@ -13,43 +13,24 @@ describe HerokuPgBackupsArchive::Backup do
     end
   end
 
-  describe "#id" do
-    context "when the backup succeeds" do
-      let(:backup_output) do
-        <<-SQL
+  let(:backup_output) do
+    <<-SQL
 Use Ctrl-C at any time to stop monitoring progress; the backup
 will continue running. Use heroku pg:backups info to check progress.
 Stop a running backup with heroku pg:backups cancel.
 
 HEROKU_POSTGRESQL_COLOR ---backup---> b022
-        SQL
-      end
+    SQL
+  end
 
-      it "extracts the ID from output" do
-        expect(HerokuPgBackupsArchive::Backup.new(backup_output).id).to eq "b022"
-      end
-    end
-
-    context "when the backup succeeds" do
-      let(:backup_output) { "Something something failure" }
-
-      it "raises an exception" do
-        expect { HerokuPgBackupsArchive::Backup.new(backup_output) }.to raise_error(HerokuPgBackupsArchive::BackupFailedError)
-      end
+  describe "#id" do
+    it "extracts the ID from output" do
+      expect(HerokuPgBackupsArchive::Backup.new(backup_output).id).to eq "b022"
     end
   end
 
   describe "#url" do
     let(:backup_object) { HerokuPgBackupsArchive::Backup.new(backup_output) }
-    let(:backup_output) do
-      <<-SQL
-use ctrl-c at any time to stop monitoring progress; the backup
-will continue running. use heroku pg:backups info to check progress.
-stop a running backup with heroku pg:backups cancel.
-
-heroku_postgresql_color ---backup---> b022
-      SQL
-    end
     let(:public_url) { "http://example.com/foo3432423\n" }
 
     before do
@@ -63,15 +44,6 @@ heroku_postgresql_color ---backup---> b022
 
   describe "#finished_at" do
     let(:backup_object) { HerokuPgBackupsArchive::Backup.new(backup_output) }
-    let(:backup_output) do
-      <<-SQL
-use ctrl-c at any time to stop monitoring progress; the backup
-will continue running. use heroku pg:backups info to check progress.
-stop a running backup with heroku pg:backups cancel.
-
-heroku_postgresql_color ---backup---> b022
-      SQL
-    end
     let(:backup_info) do
       <<-SQL
 === Backup info: b022

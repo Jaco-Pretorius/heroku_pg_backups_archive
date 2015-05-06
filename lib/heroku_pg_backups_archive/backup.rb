@@ -25,9 +25,7 @@ module HerokuPgBackupsArchive
     private
 
     def extract_id(backup_output)
-      matches = backup_output.match(/---backup---> (.*)\n/)
-      raise BackupFailedError.new(backup_output) unless matches
-      matches[1]
+      backup_output.match(/---backup---> (.*)\n/)[1]
     end
   end
 end

@@ -2,7 +2,7 @@ require "heroku_pg_backups_archive/version"
 require "heroku_pg_backups_archive/config"
 require "heroku_pg_backups_archive/backup"
 require "heroku_pg_backups_archive/backup_archive"
-require "heroku_pg_backups_archive/backup_failed_error"
+require "heroku_pg_backups_archive/operation_failed_error"
 require "heroku_pg_backups_archive/toolbelt_helper"
 require "heroku_pg_backups_archive/railtie"
 
