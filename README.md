@@ -33,6 +33,7 @@ HerokuPgBackupsArchive.configure do |config|
   config.heroku_toolbelt_path = "path/to/heroku/executable" # defaults to `vendor/heroku-toolbelt/bin/heroku` when not explicitly set
   config.aws_access_key_id = "aws-secret-key-id" # defaults to `ENV["AWS_ACCESS_KEY_ID"]` when not explicitly set
   config.aws_secret_access_key = "aws-secret-access-key" # defaults to `ENV["AWS_SECRET_ACCESS_KEY"]` when not explicitly set
+  config.aws_region = "some-region" # defaults to `us-east-1` when not explicitly set
   config.after_complete = lambda { puts "I'm all done!" } # defaults to no action
 end
 ```
@@ -44,6 +45,10 @@ rake heroku_pg_backups_archive
 ```
 
 To make the heroku toolbelt available on your dyno, you can use [heroku-buildpack-toolbelt](https://github.com/gregburek/heroku-buildpack-toolbelt).
+
+### `aws-sdk` Dependency
+
+If you have a dependency on version 1 of the `aws-sdk` gem you will need to update your gemfile to depend on `aws-sdk-v1`. This will allow your app to continue to function as normal, but allow this gem to use newer features in version 2 of the SDK.
 
 ## Development
 

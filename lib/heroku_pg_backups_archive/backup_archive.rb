@@ -1,5 +1,5 @@
 require "open-uri"
-require "aws-sdk-v1"
+require "aws-sdk"
 require "base64"
 
 module HerokuPgBackupsArchive
@@ -14,21 +14,18 @@ module HerokuPgBackupsArchive
     end
 
     def perform
-      bucket.objects[archive_path].write(backup_data, write_options)
+      s3.put_object(write_parameters)
     end
 
     private
 
     attr_reader :backup
 
-    def bucket
-      @bucket ||= s3.buckets[HerokuPgBackupsArchive.config.bucket_name]
-    end
-
     def s3
-      @s3 ||= AWS::S3.new(
+      @s3 ||= Aws::S3::Client.new(
         access_key_id: HerokuPgBackupsArchive.config.aws_access_key_id,
-        secret_access_key: HerokuPgBackupsArchive.config.aws_secret_access_key
+        secret_access_key: HerokuPgBackupsArchive.config.aws_secret_access_key,
+        region: HerokuPgBackupsArchive.config.aws_region
       )
     end
 
@@ -40,12 +37,19 @@ module HerokuPgBackupsArchive
       open(backup.url)
     end
 
-    def write_options
+    def write_parameters
+      {
+        body: backup_data,
+        bucket: HerokuPgBackupsArchive.config.bucket_name,
+        key: archive_path
+      }.merge(sse_customer_options)
+    end
+
+    def sse_customer_options
       unless HerokuPgBackupsArchive.config.sse_customer_key.nil?
         {
           sse_customer_algorithm: :AES256,
-          sse_customer_key: Base64.encode64(HerokuPgBackupsArchive.config.sse_customer_key),
-          sse_customer_key_md5: Base64.encode64(OpenSSL::Digest::MD5.digest(HerokuPgBackupsArchive.config.sse_customer_key))
+          sse_customer_key: HerokuPgBackupsArchive.config.sse_customer_key
         }
       else
         {}

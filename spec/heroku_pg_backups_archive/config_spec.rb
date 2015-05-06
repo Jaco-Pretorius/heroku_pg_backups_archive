@@ -18,6 +18,7 @@ describe HerokuPgBackupsArchive::Config do
       expect(config.heroku_toolbelt_path).to eq "vendor/heroku-toolbelt/bin/heroku"
       expect(config.aws_access_key_id).to eq aws_access_key_id
       expect(config.aws_secret_access_key).to eq aws_secret_access_key
+      expect(config.aws_region).to eq "us-east-1"
     end
   end
 end
