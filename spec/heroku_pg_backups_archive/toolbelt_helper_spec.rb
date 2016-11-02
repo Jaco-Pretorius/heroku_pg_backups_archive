@@ -16,13 +16,34 @@ describe HerokuPgBackupsArchive::ToolbeltHelper do
     let(:output) { double(:output) }
 
     before do
-      allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:`).with(
-        "/path/to/heroku pg:backups capture -a my-heroku-app 2>&1"
-      ).and_return(output)
+      allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:`) do |arg|
+        case arg
+        when "/path/to/heroku pg:info --app my-heroku-app | grep Followers | head -n 1 2>&1"
+          follower_output
+        when capture_cmd
+          output
+        else
+          raise "Unexpected arguments #{arg}"
+        end
+      end
     end
 
-    it "calls the toolbelt with the appropriate arguments and returns the output" do
-      expect(HerokuPgBackupsArchive::ToolbeltHelper.capture_backup).to eq output
+    context "when there is a follower" do
+      let(:follower_output) { "Followers: follower-db" }
+      let(:capture_cmd) { "/path/to/heroku pg:backups capture -a my-heroku-app follower-db 2>&1" }
+
+      it "calls the toolbelt with the appropriate arguments and returns the output" do
+        expect(HerokuPgBackupsArchive::ToolbeltHelper.capture_backup).to eq output
+      end
+    end
+
+    context "when there is no follower" do
+      let(:follower_output) { "" }
+      let(:capture_cmd) { "/path/to/heroku pg:backups capture -a my-heroku-app  2>&1" }
+
+      it "calls the toolbelt with the appropriate arguments and returns the output" do
+        expect(HerokuPgBackupsArchive::ToolbeltHelper.capture_backup).to eq output
+      end
     end
   end
 
