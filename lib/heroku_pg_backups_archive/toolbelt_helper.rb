@@ -4,7 +4,7 @@ module HerokuPgBackupsArchive
 
     class << self
       def capture_backup
-        run("pg:backups capture -a #{HerokuPgBackupsArchive.config.app_name}")
+        run("pg:backups capture -a #{HerokuPgBackupsArchive.config.app_name} #{follower_db(HerokuPgBackupsArchive.config.app_name)}")
       end
 
       def fetch_backup_public_url(backup_id)
@@ -16,6 +16,11 @@ module HerokuPgBackupsArchive
       end
 
       private
+
+      def follower_db(app)
+        output = run("pg:info --app #{app} | grep Followers | head -n 1")
+        output.split(" ").last
+      end
 
       def run(arguments)
         command = "#{HerokuPgBackupsArchive.config.heroku_toolbelt_path} #{arguments}"
