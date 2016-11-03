@@ -46,6 +46,8 @@ rake heroku_pg_backups_archive
 
 To make the heroku toolbelt available on your dyno, you can use [heroku-buildpack-toolbelt](https://github.com/gregburek/heroku-buildpack-toolbelt).
 
+*Note*: The backup will be captured from the first follower database, if any are present.
+
 ### `aws-sdk` Dependency
 
 If you have a dependency on version 1 of the `aws-sdk` gem you will need to update your gemfile to depend on `aws-sdk-v1`. This will allow your app to continue to function as normal, but allow this gem to use newer features in version 2 of the SDK.
