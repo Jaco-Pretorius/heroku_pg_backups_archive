@@ -15,11 +15,13 @@ describe HerokuPgBackupsArchive::Backup do
 
   let(:backup_output) do
     <<-SQL
-Use Ctrl-C at any time to stop monitoring progress; the backup
-will continue running. Use heroku pg:backups info to check progress.
-Stop a running backup with heroku pg:backups cancel.
+Starting backup of postgresql-curly-63501... done
 
-HEROKU_POSTGRESQL_COLOR ---backup---> b022
+Use Ctrl-C at any time to stop monitoring progress; the backup will continue running.
+Use heroku pg:backups:info to check progress.
+Stop a running backup with heroku pg:backups:cancel.
+
+Backing up DATABASE to b022... done
     SQL
   end
 
