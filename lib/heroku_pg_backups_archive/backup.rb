@@ -25,7 +25,7 @@ module HerokuPgBackupsArchive
     private
 
     def extract_id(backup_output)
-      backup_output.match(/Backing up DATABASE to (.*)... done\n/)[1]
+      backup_output.match(/Backing up .* to (.*)... done\n/)[1]
     end
   end
 end
