@@ -21,7 +21,7 @@ Use Ctrl-C at any time to stop monitoring progress; the backup will continue run
 Use heroku pg:backups:info to check progress.
 Stop a running backup with heroku pg:backups:cancel.
 
-Backing up DATABASE to b022... done
+Backing up IVORY to b022... done
     SQL
   end
 
