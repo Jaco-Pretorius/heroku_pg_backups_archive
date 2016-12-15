@@ -18,7 +18,7 @@ module HerokuPgBackupsArchive
     def finished_at
       @finished_at ||= begin
         info = ToolbeltHelper.fetch_backup_info(id)
-        Time.parse(info.match(/Finished:\s*(.*)\n/)[1])
+        Time.parse(info.match(/Finished at:\s*(.*)\n/)[1])
       end
     end
 
