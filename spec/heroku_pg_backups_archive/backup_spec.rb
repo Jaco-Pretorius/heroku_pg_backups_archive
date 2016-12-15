@@ -48,19 +48,19 @@ Backing up IVORY to b022... done
     let(:backup_object) { HerokuPgBackupsArchive::Backup.new(backup_output) }
     let(:backup_info) do
       <<-SQL
-=== Backup info: b022
-Database:    COLOR
-Started:     2015-05-05 19:11:04 +0000
-Finished:    2015-05-05 19:11:05 +0000
-Status:      Completed Successfully
-Type:        Manual
-Original DB Size: 1024.0MB
-Backup Size:      1024.0MB (0% compression)
+=== Backup b022
+Database:         COLOR
+Started at:       2016-12-15 15:17:54 +0000
+Finished at:      2016-12-15 15:19:39 +0000
+Status:           Completed
+Type:             Manual
+Original DB Size: 192.33MB
+Backup Size:      39.79MB (79% compression)
+
 === Backup Logs
-2015-05-05 19:11:04 +0000: waiting for pg_dump to complete
-2015-05-05 19:11:05 +0000: pg_dump done
-2015-05-05 19:11:05 +0000: waiting for upload to complete
-2015-05-05 19:11:05 +0000: upload done
+2016-12-15 15:17:54 +0000 pg_dump: reading schemas
+2016-12-15 15:17:54 +0000 pg_dump: reading user-defined tables
+2016-12-15 15:17:57 +0000 pg_dump: reading extensions
       SQL
     end
 
@@ -69,7 +69,7 @@ Backup Size:      1024.0MB (0% compression)
     end
 
     it "returns the time that the backup finished" do
-      expect(backup_object.finished_at).to eq Time.parse("2015-05-05 19:11:05 +0000")
+      expect(backup_object.finished_at).to eq Time.parse("2016-12-15 15:19:39 +0000")
     end
   end
 end
