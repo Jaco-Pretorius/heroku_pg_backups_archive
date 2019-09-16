@@ -2,27 +2,24 @@ module HerokuPgBackupsArchive
   module CliHelper
     class << self
       def capture_backup
-        run("pg:backups:capture -a #{app_name}")
+        run("pg:backups:capture")
       end
 
       def download_backup(backup_id)
         backup_file_name = "#{backup_id}.dump"
-        run("pg:backups:download #{backup_id} -o #{backup_file_name} -a #{app_name}")
+        run("pg:backups:download #{backup_id} -o #{backup_file_name}")
         backup_file_name
       end
 
       def fetch_backup_info(backup_id)
-        run("pg:backups:info #{backup_id} -a #{app_name}")
+        run("pg:backups:info #{backup_id}")
       end
 
       private
 
-      def app_name
-        HerokuPgBackupsArchive.config.app_name
-      end
-
       def run(arguments)
-        command = "heroku run 'heroku #{arguments}'"
+        app_name = HerokuPgBackupsArchive.config.app_name
+        command = "heroku run 'heroku #{arguments}' -a #{app_name}"
         puts "Running: #{command}"
 
         output = `#{command} 2>&1`
