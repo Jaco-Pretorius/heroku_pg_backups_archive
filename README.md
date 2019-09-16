@@ -30,7 +30,6 @@ HerokuPgBackupsArchive.configure do |config|
 
   # Optional
   config.sse_customer_key = "your-sse-c-key" # leave blank to disable SSE-C
-  config.heroku_toolbelt_path = "path/to/heroku/executable" # defaults to `vendor/heroku-toolbelt/bin/heroku` when not explicitly set
   config.aws_access_key_id = "aws-secret-key-id" # defaults to `ENV["AWS_ACCESS_KEY_ID"]` when not explicitly set
   config.aws_secret_access_key = "aws-secret-access-key" # defaults to `ENV["AWS_SECRET_ACCESS_KEY"]` when not explicitly set
   config.aws_region = "some-region" # defaults to `us-east-1` when not explicitly set
@@ -44,9 +43,7 @@ To run the backup, simply run:
 rake heroku_pg_backups_archive
 ```
 
-To make the heroku toolbelt available on your dyno, you can use [heroku-buildpack-toolbelt](https://github.com/gregburek/heroku-buildpack-toolbelt).
-
-*Note*: The backup will be captured from the first follower database, if any are present.
+To make the heroku cli available on your dyno, you can use [heroku-buildpack-cli](https://github.com/heroku/heroku-buildpack-cli).
 
 ### `aws-sdk` Dependency
 

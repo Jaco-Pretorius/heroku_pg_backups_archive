@@ -1,31 +1,29 @@
+require 'time'
+
 module HerokuPgBackupsArchive
   class Backup
     def self.create
-      backup_output = ToolbeltHelper.capture_backup
-      new(backup_output)
+      backup_output = CliHelper.capture_backup
+      backup_id = backup_output.match(/Backing up .* to (.*)... done\n/)[1]
+
+      new(backup_id)
     end
 
     attr_reader :id
 
-    def initialize(backup_output)
-      @id = extract_id(backup_output)
+    def initialize(id)
+      @id = id
     end
 
-    def url
-      @url ||= ToolbeltHelper.fetch_backup_public_url(id).chomp
+    def file_name
+      @file_name ||= CliHelper.download(id)
     end
 
     def finished_at
       @finished_at ||= begin
-        info = ToolbeltHelper.fetch_backup_info(id)
+        info = CliHelper.fetch_backup_info(id)
         Time.parse(info.match(/Finished at:\s*(.*)\n/)[1])
       end
-    end
-
-    private
-
-    def extract_id(backup_output)
-      backup_output.match(/Backing up .* to (.*)... done\n/)[1]
     end
   end
 end

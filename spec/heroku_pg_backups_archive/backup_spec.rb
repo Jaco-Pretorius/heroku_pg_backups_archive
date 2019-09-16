@@ -1,18 +1,4 @@
 describe HerokuPgBackupsArchive::Backup do
-  describe ".create" do
-    let(:backup_output) { double(:backup_output) }
-    let(:backup_object) { double(:backup_object) }
-
-    before do
-      allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:capture_backup).and_return(backup_output)
-      allow(HerokuPgBackupsArchive::Backup).to receive(:new).with(backup_output).and_return(backup_object)
-    end
-
-    it "creates a new backup and returns a `Backup` object" do
-      expect(HerokuPgBackupsArchive::Backup.create).to eq backup_object
-    end
-  end
-
   let(:backup_output) do
     <<-SQL
 Starting backup of postgresql-curly-63501... done
@@ -25,28 +11,30 @@ Backing up IVORY to b022... done
     SQL
   end
 
-  describe "#id" do
-    it "extracts the ID from output" do
-      expect(HerokuPgBackupsArchive::Backup.new(backup_output).id).to eq "b022"
+  before do
+    allow(HerokuPgBackupsArchive::CliHelper).to receive(:capture_backup).and_return(backup_output)
+  end
+
+  describe ".create" do
+    it "captures a new backup and returns a `Backup` object" do
+      backup = HerokuPgBackupsArchive::Backup.create
+      expect(backup.id).to eq 'b022'
     end
   end
 
-  describe "#url" do
-    let(:backup_object) { HerokuPgBackupsArchive::Backup.new(backup_output) }
-    let(:public_url) { "http://example.com/foo3432423\n" }
-
+  describe "#file_name" do
     before do
-      allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:fetch_backup_public_url).with("b022").and_return(public_url)
+      allow(HerokuPgBackupsArchive::CliHelper).to receive(:download).with("b022").and_return('b022.dump')
     end
 
     it "returns the chomped URL returned by heroku" do
-      expect(backup_object.url).to eq "http://example.com/foo3432423"
+      backup_object = HerokuPgBackupsArchive::Backup.new('b022')
+      expect(backup_object.file_name).to eq 'b022.dump'
     end
   end
 
   describe "#finished_at" do
-    let(:backup_object) { HerokuPgBackupsArchive::Backup.new(backup_output) }
-    let(:backup_info) do
+    let(:backup_info_output) do
       <<-SQL
 === Backup b022
 Database:         COLOR
@@ -65,11 +53,12 @@ Backup Size:      39.79MB (79% compression)
     end
 
     before do
-      allow(HerokuPgBackupsArchive::ToolbeltHelper).to receive(:fetch_backup_info).with("b022").and_return(backup_info)
+      allow(HerokuPgBackupsArchive::CliHelper).to receive(:fetch_backup_info).with('b022').and_return(backup_info_output)
     end
 
     it "returns the time that the backup finished" do
-      expect(backup_object.finished_at).to eq Time.parse("2016-12-15 15:19:39 +0000")
+      backup_object = HerokuPgBackupsArchive::Backup.new('b022')
+      expect(backup_object.finished_at).to eq Time.parse('2016-12-15 15:19:39 +0000')
     end
   end
 end
