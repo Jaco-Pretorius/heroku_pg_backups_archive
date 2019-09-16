@@ -6,13 +6,8 @@ module HerokuPgBackupsArchive
       end
 
       def download_backup(backup_id)
-        run("pg:backups:download #{backup_id} -a #{app_name}")
         backup_file_name = "#{backup_id}.dump"
-        if File.exists?('latest.dump')
-          `mv latest.dump #{backup_file_name}`
-        else
-          raise OperationFailedError.new('Could not locate latest.dump backup file')
-        end
+        run("pg:backups:download #{backup_id} -o #{backup_file_name} -a #{app_name}")
         backup_file_name
       end
 
