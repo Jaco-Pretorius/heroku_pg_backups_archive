@@ -7,7 +7,7 @@ module HerokuPgBackupsArchive
 
       def download_backup(backup_id)
         backup_file_name = "#{backup_id}.dump"
-        run("pg:backups:download #{backup_id} -o #{backup_file_name}")
+        run("pg:backups:download #{backup_id} -o #{backup_file_name} -a #{app_name}")
         backup_file_name
       end
 
