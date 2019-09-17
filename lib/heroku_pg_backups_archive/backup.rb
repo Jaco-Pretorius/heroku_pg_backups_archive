@@ -16,7 +16,7 @@ module HerokuPgBackupsArchive
     end
 
     def file_name
-      @file_name ||= CliHelper.download(id)
+      @file_name ||= CliHelper.download_backup(id)
     end
 
     def finished_at
