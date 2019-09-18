@@ -12,7 +12,7 @@ module HerokuPgBackupsArchive
     end
 
     def perform
-      s3_path = "#{backup.finished_at.strftime("%Y/%m/%d")}/#{backup.finished_at.iso8601}"
+      s3_path = HerokuPgBackupsArchive.config.s3_path.call(backup.finished_at)
       s3_client.put_object({
         body: backup.file_name,
         bucket: HerokuPgBackupsArchive.config.bucket_name,

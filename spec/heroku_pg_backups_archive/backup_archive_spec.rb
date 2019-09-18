@@ -5,7 +5,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
       double(
         :backup_object,
         file_name: 'backup.dump',
-        finished_at: Time.parse('2015-05-05 19:11:05 +0000')
+        finished_at: Time.parse('2015-05-05')
       )
     end
     let(:config) do
@@ -15,7 +15,8 @@ describe HerokuPgBackupsArchive::BackupArchive do
         aws_access_key_id: aws_access_key_id,
         aws_secret_access_key: aws_secret_access_key,
         aws_region: aws_region,
-        bucket_name: bucket_name
+        bucket_name: bucket_name,
+        s3_path: lambda { |time| 'some/s3/path' }
       )
     end
     let(:aws_access_key_id) { double(:aws_access_key_id) }
@@ -42,7 +43,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
         expect(s3_client).to have_received(:put_object).with(
           body: 'backup.dump',
           bucket: bucket_name,
-          key: '2015/05/05/2015-05-05T19:11:05+00:00',
+          key: 'some/s3/path',
           sse_customer_algorithm: :AES256,
           sse_customer_key: sse_customer_key
         )
@@ -56,7 +57,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
         expect(s3_client).to have_received(:put_object).with(
           body: 'backup.dump',
           bucket: bucket_name,
-          key: '2015/05/05/2015-05-05T19:11:05+00:00'
+          key: 'some/s3/path'
         )
       end
     end
