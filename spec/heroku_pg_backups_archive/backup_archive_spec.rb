@@ -24,6 +24,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
     let(:aws_region) { double(:aws_region) }
     let(:bucket_name) { 'the-backup-bucket' }
     let(:s3_client) { double(:s3_client, put_object: nil) }
+    let(:backup_file_contents) { double(:backup_file_contents) }
 
     before do
       allow(HerokuPgBackupsArchive).to receive(:config).and_return(config)
@@ -32,6 +33,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
         secret_access_key: aws_secret_access_key,
         region: aws_region
       ).and_return(s3_client)
+      allow(File).to receive(:open).with('backup.dump', 'rb').and_yield(backup_file_contents)
 
       backup_archive.perform
     end
@@ -41,7 +43,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
 
       it 'writes the file to S3 with SSE-C' do
         expect(s3_client).to have_received(:put_object).with(
-          body: 'backup.dump',
+          body: backup_file_contents,
           bucket: bucket_name,
           key: 'some/s3/path',
           sse_customer_algorithm: :AES256,
@@ -55,7 +57,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
 
       it 'writes the file to S3 without SSE-C' do
         expect(s3_client).to have_received(:put_object).with(
-          body: 'backup.dump',
+          body: backup_file_contents,
           bucket: bucket_name,
           key: 'some/s3/path'
         )

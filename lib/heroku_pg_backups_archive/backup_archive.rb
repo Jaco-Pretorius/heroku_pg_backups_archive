@@ -13,11 +13,13 @@ module HerokuPgBackupsArchive
 
     def perform
       s3_path = HerokuPgBackupsArchive.config.s3_path.call(backup.finished_at)
-      s3_client.put_object({
-        body: backup.file_name,
-        bucket: HerokuPgBackupsArchive.config.bucket_name,
-        key: s3_path
-      }.merge(sse_customer_options))
+      File.open(backup.file_name, 'rb') do |file|
+        s3_client.put_object({
+          body: file,
+          bucket: HerokuPgBackupsArchive.config.bucket_name,
+          key: s3_path
+        }.merge(sse_customer_options))
+      end
     end
 
     private
