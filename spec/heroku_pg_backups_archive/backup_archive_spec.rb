@@ -23,8 +23,8 @@ describe HerokuPgBackupsArchive::BackupArchive do
     let(:aws_secret_access_key) { double(:aws_secret_access_key) }
     let(:aws_region) { double(:aws_region) }
     let(:bucket_name) { 'the-backup-bucket' }
-    let(:s3_client) { double(:s3_client, put_object: nil) }
-    let(:backup_file_contents) { double(:backup_file_contents) }
+    let(:s3_client) { double(:s3_client) }
+    let(:s3_object) { double(:s3_object, upload_file: nil) }
 
     before do
       allow(HerokuPgBackupsArchive).to receive(:config).and_return(config)
@@ -33,7 +33,9 @@ describe HerokuPgBackupsArchive::BackupArchive do
         secret_access_key: aws_secret_access_key,
         region: aws_region
       ).and_return(s3_client)
-      allow(File).to receive(:open).with('backup.dump', 'rb').and_yield(backup_file_contents)
+      allow(Aws::S3::Object).to receive(:new)
+        .with('the-backup-bucket', 'some/s3/path', client: s3_client)
+        .and_return(s3_object)
 
       backup_archive.perform
     end
@@ -42,12 +44,12 @@ describe HerokuPgBackupsArchive::BackupArchive do
       let(:sse_customer_key) { 'some-key-thats-a-secret' }
 
       it 'writes the file to S3 with SSE-C' do
-        expect(s3_client).to have_received(:put_object).with(
-          body: backup_file_contents,
-          bucket: bucket_name,
-          key: 'some/s3/path',
-          sse_customer_algorithm: :AES256,
-          sse_customer_key: sse_customer_key
+        expect(s3_object).to have_received(:upload_file).with(
+          'backup.dump',
+          {
+            sse_customer_algorithm: :AES256,
+            sse_customer_key: sse_customer_key
+          }
         )
       end
     end
@@ -56,11 +58,7 @@ describe HerokuPgBackupsArchive::BackupArchive do
       let(:sse_customer_key) { nil }
 
       it 'writes the file to S3 without SSE-C' do
-        expect(s3_client).to have_received(:put_object).with(
-          body: backup_file_contents,
-          bucket: bucket_name,
-          key: 'some/s3/path'
-        )
+        expect(s3_object).to have_received(:upload_file).with('backup.dump', {})
       end
     end
   end

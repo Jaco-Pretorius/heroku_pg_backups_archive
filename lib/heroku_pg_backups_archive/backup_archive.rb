@@ -13,13 +13,8 @@ module HerokuPgBackupsArchive
 
     def perform
       s3_path = HerokuPgBackupsArchive.config.s3_path.call(backup.finished_at)
-      File.open(backup.file_name, 'rb') do |file|
-        s3_client.put_object({
-          body: file,
-          bucket: HerokuPgBackupsArchive.config.bucket_name,
-          key: s3_path
-        }.merge(sse_customer_options))
-      end
+      s3_object = Aws::S3::Object.new(HerokuPgBackupsArchive.config.bucket_name, s3_path, client: s3_client)
+      s3_object.upload_file(backup.file_name, sse_customer_options)
     end
 
     private
@@ -27,7 +22,7 @@ module HerokuPgBackupsArchive
     attr_reader :backup
 
     def s3_client
-      @s3 ||= Aws::S3::Client.new(
+      Aws::S3::Client.new(
         access_key_id: HerokuPgBackupsArchive.config.aws_access_key_id,
         secret_access_key: HerokuPgBackupsArchive.config.aws_secret_access_key,
         region: HerokuPgBackupsArchive.config.aws_region
