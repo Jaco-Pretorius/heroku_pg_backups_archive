@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'digest'
 
 module HerokuPgBackupsArchive
   class BackupArchive
@@ -36,6 +37,7 @@ module HerokuPgBackupsArchive
         {
           sse_customer_algorithm: :AES256,
           sse_customer_key: HerokuPgBackupsArchive.config.sse_customer_key
+          sse_customer_key_md5: Digest::MD5.hexdigest(HerokuPgBackupsArchive.config.sse_customer_key)
         }
       end
     end
