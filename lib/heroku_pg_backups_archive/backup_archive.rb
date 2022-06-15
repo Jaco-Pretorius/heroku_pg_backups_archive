@@ -23,9 +23,13 @@ module HerokuPgBackupsArchive
     attr_reader :backup
 
     def s3_client
+      credentials = Aws::Credentials.new(
+        HerokuPgBackupsArchive.config.aws_access_key_id,
+        HerokuPgBackupsArchive.config.aws_secret_access_key
+      )
+
       Aws::S3::Client.new(
-        access_key_id: HerokuPgBackupsArchive.config.aws_access_key_id,
-        secret_access_key: HerokuPgBackupsArchive.config.aws_secret_access_key,
+        credentials: credentials,
         region: HerokuPgBackupsArchive.config.aws_region
       )
     end
